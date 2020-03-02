@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BabyDragon : TroopsManager
 {
@@ -20,6 +21,8 @@ public class BabyDragon : TroopsManager
 
     bool aloneInRadius;
     public Material[] babyMaterials;
+
+    public Text rageText;
 
     private enum State
     {
@@ -88,6 +91,7 @@ public class BabyDragon : TroopsManager
         if(troops.Count == 0)
         {
             aloneInRadius = true;
+            rageText.text = "RAGED";
             transform.GetComponentInChildren<MeshRenderer>().material = babyMaterials[1];
         }
 
@@ -103,12 +107,14 @@ public class BabyDragon : TroopsManager
                 if ((troopPos - babyPos).sqrMagnitude <= 250f && t != null)
                 {
                     aloneInRadius = false;
+                    rageText.text = "NO RAGE";
                     transform.GetComponentInChildren<MeshRenderer>().material = babyMaterials[0];
                 }
 
                 else if ((troopPos - babyPos).sqrMagnitude > 250f && t != null)
                 {
                     aloneInRadius = true;
+                    rageText.text = "RAGED";
                     transform.GetComponentInChildren<MeshRenderer>().material = babyMaterials[1];
                 }
             }

@@ -16,6 +16,8 @@ public class SpellManager : MonoBehaviour
     public GameObject healSpell;
     public GameObject rageSpell;
 
+    public LayerMask groundLayer;
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -31,7 +33,7 @@ public class SpellManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             bool instantiated = false;
 
-            if(Physics.Raycast(ray, out hit))
+            if(Physics.Raycast(ray, out hit,Mathf.Infinity, groundLayer))
             {
                 if (hit.collider.gameObject.CompareTag("Ground") && instantiated == false)
                 {

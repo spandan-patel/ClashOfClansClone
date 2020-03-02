@@ -57,73 +57,98 @@ public class InfernoTower : DefenceManager
                 }
             }
 
-            //if (troops[i] == null)
+            //if (troops.Count == 0)
             //{
-            //    //int i = 0;
+            //    foreach(LineRenderer laser in FindObjectsOfType<LineRenderer>())
+            //    {
+            //        Destroy(laser);
+            //    }
+            //}        
             //
-            //    attackAllTroops.Remove(troops[i].gameObject);
-            //    troopsInsideAttackRange.Remove(troops[i].gameObject);
-            //    //if(troopsInsideAttackRange.Count > 1)
-            //
-            //    troops.Remove(troops[i].GetComponent<TroopsManager>());
-            //    //Debug.Log(troops.Count);
-            //    //i++;
+            //else if(firstTroopInside.Count == 0 && troops.Count != 0)
+            //{
+            //    foreach (LineRenderer laser in FindObjectsOfType<LineRenderer>())
+            //    {
+            //        Destroy(laser);
+            //    }
             //}
-            
         }
     }
 
     void DamageAllTroops(GameObject allTroop)
     {
-        
+        //if(!attackAllTroops.Contains(allTroop))
+        //    attackAllTroops.Add(allTroop);
+        //
+        //
+        //if (allTroop != null)
+        //{
+        //    //if(attackAllTroops.Count != transform.childCount - 3)
+        //        GameObject laser = Instantiate(beam, transform) as GameObject;
+        //
+        //    laser.GetComponent<LaserBeam>().target = allTroop.transform;
+        //
+        //    laser.GetComponent<LineRenderer>().SetPosition(0, laserHead.position);
+        //    laser.GetComponent<LineRenderer>().SetPosition(1, allTroop.GetComponentInChildren<MeshRenderer>().gameObject.transform.position);
+        //}
+        //
+        //else if(allTroop == null)
+        //{
+        //    attackAllTroops.Remove(allTroop);
+        //    this.GetComponentInChildren<LaserBeam>().hasTarget = false;
+        //}
+
         //bool laserInstantiated;
 
         if (!attackAllTroops.Contains(allTroop))
         {
             attackAllTroops.Add(allTroop);
-
+        
             GameObject laser = Instantiate(beam, transform) as GameObject;
-
+        
             //if(!laserBeams.Contains(laser.GetComponent<LineRenderer>()))
-            //laserBeams.Add(laser.GetComponent<LineRenderer>());
+            laserBeams.Add(laser.GetComponent<LineRenderer>());
+        
+            laser.GetComponent<LaserBeam>().target = allTroop.transform;
+        
+        
             //
             //Debug.Log(laserBeams.Count);
         }
-            
-
+        
         for(int i = 0; i < attackAllTroops.Count; i++)
         {
             //if(!laserBeams.Contains(FindObjectOfType<LineRenderer>()))
             //if(laserBeams[i] == null)
             //laserBeams.Add(gameObject.GetComponentsInChildren<LineRenderer>[i]())
-
-
+        
+        
             //laserBeams.AddRange(FindObjectsOfType<LineRenderer>());
-            if(!laserBeams.Contains(transform.GetChild(3 + i).GetComponent<LineRenderer>()))
-                laserBeams.Add(transform.GetChild(3 + i).GetComponent<LineRenderer>());
-
+            //if(laserBeams.Count != i + 1)
+            //    laserBeams.Add(transform.GetComponentInChildren<LineRenderer>());
+        
             //if (laserBeams.Count != attackAllTroops.Count)
                 
-
+        
             //Debug.Log(laserBeams.Count);
-
+        
             //beam.positionCount = attackAllTroops.Count * 2;
             if (attackAllTroops[i] != null && laserBeams[i] != null)
             {
                 laserBeams[i].SetPosition(0, laserHead.position);
                 laserBeams[i].SetPosition(1, attackAllTroops[i].GetComponentInChildren<MeshRenderer>().gameObject.transform.position);
-
+        
                 //attackAllTroops[i].GetComponent<TroopsManager>().TakeDamage(damage / 50f);
-
+        
                 //yield return null;
             }            
-
-            else if(attackAllTroops[i] == null)
+        
+            else if(attackAllTroops[i] == null && laserBeams[i] != null)
             {
                 //Debug.Log("Kill");
-                Destroy(transform.GetChild(3 + i).gameObject);
+                laserBeams[i].GetComponent<LaserBeam>().hasTarget = false;
                 laserBeams.Remove(laserBeams[i]);
-                
+        
                 attackAllTroops.Remove(attackAllTroops[i]);
                 //Debug.Log(attackAllTroops.Count);
             }
@@ -147,17 +172,29 @@ public class InfernoTower : DefenceManager
 
         if (firstTroopInside[0] != null && firstTroopInside[0] == troopInside)
         {
+            if (!transform.GetComponentInChildren<LineRenderer>())
+            {
+                GameObject laser = Instantiate(beam, transform) as GameObject;
+
+                //LineRenderer laserBeam = laser.GetComponent<LineRenderer>();
+                // laserBeam.SetPosition(0, laserHead.position);
+                //laserBeam.SetPosition(1, t.GetComponentInChildren<MeshRenderer>().gameObject.transform.position);
+            }
+
+            LineRenderer laserBeam = GetComponentInChildren<LineRenderer>();
             //firstTroop = true;
-            StartCoroutine(ApplyDamage(firstTroopInside[0]));
+            StartCoroutine(ApplyDamage(firstTroopInside[0], laserBeam));
             //Debug.Log("After Starting coroutine");
         }
 
         else if(firstTroopInside[0] == null)
         {
+            LineRenderer laserBeam = GetComponentInChildren<LineRenderer>();
+            //Debug.Log(laserBeam.name);
+            StopFirstAttack(laserBeam);
             clearTroop = true;
             ClearAddSort();
             //Debug.Log(troops.Count);
-            StopFirstAttack();
         }
         //else if (firstTroopInside[0] != troopInside || firstTroopInside[0] == null)
         //{
@@ -202,7 +239,7 @@ public class InfernoTower : DefenceManager
             //firstTroopInside.Remove(troopInside);
     }
 
-    IEnumerator ApplyDamage(GameObject t)
+    IEnumerator ApplyDamage(GameObject t, LineRenderer laser)
     {
         float simpleDamage = 0f;
         //float time = 0f;
@@ -210,14 +247,7 @@ public class InfernoTower : DefenceManager
 
         //Debug.Log(t.name);
 
-        if (!transform.GetComponentInChildren<LineRenderer>())
-        {
-            GameObject laser = Instantiate(beam, transform) as GameObject;
-
-            //LineRenderer laserBeam = laser.GetComponent<LineRenderer>();
-           // laserBeam.SetPosition(0, laserHead.position);
-            //laserBeam.SetPosition(1, t.GetComponentInChildren<MeshRenderer>().gameObject.transform.position);
-        }           
+                   
 
         //float startWidth = beam.startWidth { };
         //float endWidth = beam.endWidth;
@@ -225,10 +255,10 @@ public class InfernoTower : DefenceManager
 
         if (t != null)
         {
-            LineRenderer laserBeam = GetComponentInChildren<LineRenderer>();
 
-            laserBeam.SetPosition(0, laserHead.position);
-            laserBeam.SetPosition(1, t.GetComponentInChildren<MeshRenderer>().gameObject.transform.position);
+            laser.GetComponent<LaserBeam>().target = t.transform;
+            laser.SetPosition(0, laserHead.position);
+            laser.SetPosition(1, t.GetComponentInChildren<MeshRenderer>().gameObject.transform.position);
 
             //Debug.Log(troopsInsideSingleTarget[0].name);
             time += Time.fixedDeltaTime;
@@ -237,24 +267,24 @@ public class InfernoTower : DefenceManager
             if (time % 60 < 1.5f)
             {
                 simpleDamage = damage;
-                laserBeam.startWidth = 0.2f;
-                laserBeam.endWidth = 0.2f;
+                laser.startWidth = 0.2f;
+                laser.endWidth = 0.2f;
                 t.GetComponent<TroopsManager>().TakeDamage(simpleDamage / 50f);
             }
 
             else if (time % 60 > 1.5f && time % 60 < 5.25f)
             {
                 simpleDamage = damage * 3f;
-                laserBeam.startWidth = 0.4f;
-                laserBeam.endWidth = 0.4f; 
+                laser.startWidth = 0.4f;
+                laser.endWidth = 0.4f; 
                 t.GetComponent<TroopsManager>().TakeDamage(simpleDamage / 50f);
             }
 
             else
             {
                 simpleDamage = damage * 30f;
-                laserBeam.startWidth = 0.6f;
-                laserBeam.endWidth = 0.6f;
+                laser.startWidth = 0.6f;
+                laser.endWidth = 0.6f;
                 t.GetComponent<TroopsManager>().TakeDamage(simpleDamage / 50f);
             }
 
@@ -273,12 +303,12 @@ public class InfernoTower : DefenceManager
         yield break;    
     }
 
-    void StopFirstAttack()
+    void StopFirstAttack(LineRenderer laserToDestroy)
     {
         //Debug.Log("Hi");
         time = 0;
         //Debug.Log(transform.GetComponentInChildren<LineRenderer>());
-        Destroy(transform.GetComponentInChildren<LineRenderer>());
+        laserToDestroy.GetComponent<LaserBeam>().hasTarget = false;
         //firstTroopInside.Remove(t);
     }
 

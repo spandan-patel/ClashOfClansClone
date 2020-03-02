@@ -123,7 +123,7 @@ public class LumberJack : TroopsManager
     {
         allBuildings.Clear();
 
-        foreach (DefenceManager t in FindObjectsOfType<DefenceManager>())
+        foreach (BuildingsManager t in FindObjectsOfType<BuildingsManager>())
         {
             allBuildings.Add(t.transform);
         }
